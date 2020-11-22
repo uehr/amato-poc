@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" charset="utf-8">
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/93db328445.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100&family=M+PLUS+1p:wght@300&display=swap" rel="stylesheet">
+    <style type="text/css">:root {    --main-light-bg-color:#f4f5f7;    --main-dark-bg-color: #282c34;    --main-light-font-color: white;    --main-light-theme-color: #00e091;    --main-dark-font-color: #282c34;    --main-dark-theme-color: #1aac5d;}html {  margin: 0;  padding: 0;  background-color: var(--main-dark-bg-color);}body {    text-align: center;    background-color: var(--main-light-bg-color);    font-family: "M PLUS 1p", "Noto Sans JP", sans-serif;}::selection {    background: var(--main-light-theme-color);    color: var(--main-light-bg-color);}.slide {    height: 100vh;    margin-top: 1rem;}.list {    vertical-align: top;    text-align: left;    font-size: 2rem;    margin: auto;    margin-left: 10vw;    margin-right: 10vw;}.list-icon {    color: var(--main-light-theme-color);    font-size: 80%;    margin-right: 1rem;}#slide-num {    font-family: "Lato", "M PLUS 1p";    position: fixed;    margin: 0;    right: 0;    bottom: 2px;    background-color: var(--main-dark-bg-color);    padding: 0 1rem;    opacity: 0.8;    font-size: 1.5rem;    text-align: center;    vertical-align: middle;    color: var(--main-light-bg-color);    border-radius: 10px 0 0 10px;}.dark-theme-color {  color: var(--main-dark-theme-color);}.light-theme-color {  color: var(--main-light-theme-color);}.dark-bg-color {  background-color: var(--main-dark-bg-color);}.default-font {  font-size: 2.5rem;}.large-font {  font-size: 3.5rem;}a {  text-decoration: none;}a {  position: relative;  display: inline-block;  transition: .3s;  color: var(--main-light-theme-color);}a::before,a::after {  position: absolute;  content: '';  width: 0;  height: 1px;  background-color: var(--main-dark-bg-color);  transition: .3s;}a::before {  top: 0;  left: 0;}a::after {  bottom: 0;  right: 0;}a:hover::before,a:hover::after {  width: 100%;}.title {    --headline-spacing: 0.7rem;    font-family: "Lato", "M PLUS 1p";    margin: 0.1rem;    display: inline-block;    font-size: 3rem;    text-align: center;    letter-spacing: var(--headline-spacing);    vertical-align: middle;    margin-top: 40vh;    padding: 0.5rem 3rem;    border-bottom: 0.1rem solid var(--main-dark-font-color);}.headline {    --headline-spacing: 0.7rem;    font-family: "M PLUS 1p";    margin: 0.1rem;    display: inline-block;    font-size: 2.5rem;    text-align: center;    letter-spacing: var(--headline-spacing);    vertical-align: middle;    padding: 0.5rem 3rem;    border-bottom: 0.1rem solid var(--main-dark-font-color);    margin-bottom: 4rem;}.headline-fontawesome {    font-size: 2rem;}.headline-image {    width: 0.8em;    margin: 0;    margin-right: var(--headline-spacing);    border-radius: 30%;    border: var(--main-dark-bg-color) 1px solid;    vertical-align: middle;}.large {    font-size: 4vw;    margin-left: 3vw;    margin-right: 3vw;}.middle {    vertical-align: middle;}.center {    text-align: center;}.active .blur {    filter: blur(10%);    animation-name: blur;    animation-duration: 3s;    animation-fill-mode: forwards;}.active .fa-rotate {    transform: rotate(0);    animation-name: fa-rotation;    animation-duration: 1s;}@keyframes blur {    0% {        filter: blur(10px);    }    100% {        filter: blur(0);    }}@keyframes fa-rotation {    0%{        transform:rotate(0);    }    60%{         transform:rotate(20deg);     }    100%{         transform:rotate(0);     }}img {    height: 75vmin;    border-radius: 20px;    box-shadow: 0px 0px 20px rgba(0, 0, 0, .7);}.large-img {    height: 75vmin;    border-radius: 20px;    box-shadow: 0px 0px 20px rgba(0, 0, 0, .7);}.video {    margin: 0;    padding: 0;    position: relative;    width: 75%;    margin: auto;    box-shadow: 0px 0px 20px rgba(0, 0, 0, .7);}.video:before {    content: "";    display: block;    padding-top: 56.25% /*16:9固定*/}.video iframe {    position: absolute;    top: 50%;    left: 50%;    transform: translate(-50%, -50%);    -webkit-transform: translate(-50%, -50%);    -ms-transform: translate(-50%, -50%);    width: 100%;    height: 100%;}</style>
+    <script>var arg = new Object;
+var pair=location.search.substring(1).split('&');
+for(var i=0;pair[i];i++) {
+    var kv = pair[i].split('=');
+    arg[kv[0]]=kv[1];
+}
+
+$(window).on('load', async () => {
+    alert("Enterや矢印キーでスライド移動が可能です")
+
+    let active_slide_num = -1
+    const activateSlide = slide_num => {
+        setSlideNum(slide_num)
+
+        for(let idx = 0; idx < slides_top.length; idx++) {
+            active_slide_num = slide_num;
+            if(idx === slide_num) {
+                $(`#slide${idx}`).addClass("active")
+            } else deactivateSlide(idx)
+        }
+
+        console.log("activated")
+    }
+
+    $("html").append("<p id='slide-num'>#1</p>");
+
+    const deactivateSlide = slide_num => {
+        $(`#slide${slide_num}`).removeClass("active")
+    }
+
+    const moveToSlide = slide_num => {
+        let escaped_slide_num = Math.max(slide_num, 0)
+        escaped_slide_num = Math.min(escaped_slide_num, slides_top.length-1)
+        $("html,body").animate({scrollTop:$(`#slide${escaped_slide_num}`).offset().top});
+    }
+
+    const setSlideNum = slide_num => {
+        console.log("fuga")
+        $("#slide-num").animate({
+            opacity: 0.5
+        }, {
+            duration: 300,
+            complete: () => {
+                console.log(`#${slide_num}`)
+                $("#slide-num").text(`#${slide_num+1}`)
+                $("#slide-num").animate({opacity: 0.7}, {duration: 300})
+            }
+        })
+    }
+
+    const slides_top = []
+    for(let idx = 0; idx < $(".slide").length; idx++) {
+        const partation = $(".slide")[idx]
+        partation.id = `slide${idx}`;
+        const top = partation.getBoundingClientRect().top + window.pageYOffset
+        slides_top.push(top)
+    }
+
+    // ?slide=Nでスライド番号を指定可能
+    if(arg["slide"]) moveToSlide(arg["slide"]-1)
+
+    // スクロール位置を見て画面内のスライドをアクティブ化する
+    setInterval(() => {
+        let slide_pointer = 0;
+        const scroll_middle = $(window).scrollTop() + $(window).height() / 2
+
+        for(let idx = 0; idx < slides_top.length; idx++) {
+            const slide_top = slides_top[idx]
+            // console.log(`idx: ${idx}, slide-top: ${slide_top}, slide-pointer: ${slide_pointer}`)
+            if(slide_top <= scroll_middle && slide_pointer < idx) {
+                slide_pointer = idx
+            }
+            if(idx === slides_top.length-1 && active_slide_num !== slide_pointer) {
+                active_slide_num = slide_pointer
+                activateSlide(slide_pointer)
+            }
+        }
+    }, 10);
+
+    $('html').keyup(e => {
+        switch(e.which){
+            case 37: // Key ←
+                moveToSlide(active_slide_num-1)
+                break;
+            case 38: // Key ↑
+                moveToSlide(active_slide_num-1)
+                break;
+            case 39: // Key →
+                moveToSlide(active_slide_num+1)
+                break;
+            case 40: // Key ↓
+                moveToSlide(active_slide_num+1)
+                break;
+            case 13: // Enter
+                moveToSlide(active_slide_num+1)
+                break;
+        }
+    })
+})</script>
+</head>
+<body>
+<div class="slide"><h1 class="title blur" id="">げーむさんぽ<i class="fas fa-shoe-prints"></i></h1><p class="blur" id="">with amATO(α)</p></div><div class="slide"><h1 class="headline" id=""><i class="fas fa-address-card fa-rotate"></i>だれ？</h1><ul>
+<p class="list " id=""><i class="list-icon fas fa-caret-right"></i>うえはら</p><p class="list " id=""><i class="list-icon fas fa-caret-right"></i>AIサービス開発部 第2ユニット</p><p class="list " id=""><i class="list-icon fas fa-caret-right"></i>AI Camera (Lite, Mobile) / SecondSight / SmartField</p><p class="list " id=""><i class="list-icon fas fa-caret-right"></i>さんぽ好き</p></ul>
+</div><div class="slide"><h1 class="headline middle center" id=""><i class="fas fa-baby fa-rotate"></i>なにがしたい？</h1><p class="large" id="">とにかくげーむさんぽを推したい！！！</p></div><div class="slide"><h1 class="headline" id=""><i class="fas fa-shoe-prints fa-rotate"></i>げーむさんぽ？</h1><ul>
+<p class="list " id=""><i class="list-icon fas fa-caret-right"></i>YouTubeのチャンネル（企画？）</p><p class="list " id=""><i class="list-icon fas fa-caret-right"></i>ゲーム実況というレッドオーシャンにおいてユニークな個性で視聴者を集めるチャンネル</p><p class="list " id=""><i class="list-icon fas fa-caret-right"></i>精神科医、建築士、はては3歳児まで様々なゲストを招きゲーム内で雑談をしていく</p></ul>
+</div><div class="slide"><h1 class="headline" id=""><i class="fas fa-cat fa-rotate"></i>要は？</h1><p class="large" id="">ゲーム内を散歩しながらの&quot;オタク語り&quot;が<br>魅力のチャンネル</p></div><div class="slide"><h1 class="headline" id=""><i class="fas fa-play-circle fa-rotate"></i>100万再生↑の動画も</h1><p class="" id=""><img class="large-img" id="" src="https://user-images.githubusercontent.com/26696733/97487999-0341b900-19a1-11eb-8f0c-2fa3d5af42ba.png" alt="バズ"></p></div><div class="slide"><h1 class="headline middle center" id=""><i class="fas fa-baby fa-rotate"></i>改めて</h1><p class="large" id="">とにかくげーむさんぽを推したい！！！</p></div><div class="slide"><h1 class="headline" id=""><i class="fas fa-hand-holding-heart fa-rotate"></i>名作ピックアップ</h1><p class="large" id="">俺的名作をピックアップ</p></div><div class="slide"><h1 class="headline" id=""><i class="fas fa-dragon fa-rotate"></i>FF7リメイク︎✖︎建築史家(20:54〜21:42)</h1><div class="video">
+    <iframe src="https://www.youtube.com/embed/OM98mnc7W6s?start=1254" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+</div><div class="slide"><h1 class="headline" id=""><i class="fas fa-dragon fa-rotate"></i>FF7リメイク︎✖︎建築史家(コメント)</h1><p class="" id=""><img class="large-img" id="" src="https://user-images.githubusercontent.com/26696733/97596637-4440d880-1a48-11eb-87b7-0a0ccee9d324.png" alt="FF7リメイクx建築史家-コメント"></p></div><div class="slide"><h1 class="headline" id=""><i class="fas fa-circle-notch fa-rotate"></i>Detroit✖︎精神分析(03:04〜04:56)</h1><br>
+
+<div class="video">
+    <iframe src="https://www.youtube.com/embed/hQiVYWZPwCk?start=184" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+</div><div class="slide"><h1 class="headline" id=""><i class="fas fa-circle-notch fa-rotate"></i>Detroit✖︎精神分析(コメント)</h1><p class="" id=""><img class="large-img" id="" src="https://user-images.githubusercontent.com/26696733/97583752-a0046500-1a3a-11eb-9066-f55d8e76b582.png" alt="Detroitx精神分析-コメント"></p></div><div class="slide"><h1 class="headline" id=""><i class="fas fa-shoe-prints fa-rotate"></i>げーむさんぽ！</h1><ul>
+<p class="list " id=""><i class="list-icon fas fa-caret-right"></i>ゲストの濃いオタク語りを楽しむ企画</p><p class="list " id=""><i class="list-icon fas fa-caret-right"></i>&quot;学び&quot;が&quot;面白さ&quot;に変換される</p><p class="list " id=""><i class="list-icon fas fa-caret-right"></i>&quot;視点&quot;を変えることでコンテンツはより深く、より面白く</p><p class="list " id=""><i class="list-icon fas fa-caret-right"></i>チャンネル登録求む！！！</p></ul>
+<p class="large" id=""><a href="https://www.youtube.com/user/gotouchi10sec">チャンネルへ</a></p></div>
+</body>
+</html>
